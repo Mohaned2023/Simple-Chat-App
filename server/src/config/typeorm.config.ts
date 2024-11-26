@@ -1,5 +1,6 @@
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModuleAsyncOptions } from "@nestjs/typeorm";
+import { UserEntity } from "src/user/entities/user.entity";
 
 
 export const typeormConfig: TypeOrmModuleAsyncOptions = {
@@ -12,7 +13,7 @@ export const typeormConfig: TypeOrmModuleAsyncOptions = {
         username: configService.get<string>('CHATAPP_DATABASE_USERNAME'),
         password: configService.get<string>('CHATAPP_DATABASE_PASSWORD'),
         database: configService.get<string>('CHATAPP_DATABASE_NAME'),
-        entities: [],
+        entities: [UserEntity],
         synchronize: configService.get<string>('CHATAPP_DATABASE_SYNC') === 'true',
     })
 };
