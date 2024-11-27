@@ -1,4 +1,11 @@
-import { HttpException, HttpStatus, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { 
+    HttpException, 
+    HttpStatus, 
+    Injectable, 
+    InternalServerErrorException, 
+    Logger, 
+    UnauthorizedException 
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
 import { Repository } from 'typeorm';
@@ -9,6 +16,7 @@ import { ConfigService } from '@nestjs/config';
 import { FormatAuthReturnInterface } from './interfaces';
 import { omitObjectKeys } from 'src/utils/omit.util';
 import { JwtPayloadInterface } from 'src/auth/interfaces';
+import { LoginDto } from './dtos/login.dto';
 
 @Injectable()
 export class UserService {
@@ -38,8 +46,31 @@ export class UserService {
         }
     }
 
+    async login(loginDto: LoginDto): Promise<FormatAuthReturnInterface> {
+        const { username, password } = loginDto;
+        const user: UserEntity = await this.userRepository.findOne({where: {username}});
+        if ( !user ) throw new HttpException(`User wiht username '${username}' NOT found!`, HttpStatus.NOT_FOUND);
+        const hashedPassword = await bcrypt.hash( password, user.salt );
+        if ( hashedPassword !== user.password ) throw new UnauthorizedException();
+        this.logger.log(`The user with username '${username}' loged in...`);
+        return this.formatAuthReturn(user);
+    }
+
+    async refresh( refreshToken: string ) {
+        try {
+            // nestjs can not catch the verify error!!!
+            const decoded = this.jwtService.verify( refreshToken, {ignoreExpiration: false});
+            const user = await this.userRepository.findOne({ where: {username: decoded.username } });
+            if ( !user ) throw new UnauthorizedException();
+            return this.formatAuthReturn(user);
+        } catch( error ) {
+            throw new UnauthorizedException();
+        }
+    }
+
     private formatAuthReturn(user: UserEntity): FormatAuthReturnInterface {
         const payload: JwtPayloadInterface = { id: user.id, username: user.username };
+        this.logger.log(`Create accessToken and refreshToken for '${user.username}'`);
         return {
             accessToken: this.jwtService.sign(payload),
             refreshToken: this.jwtService.sign(payload, {expiresIn: '7d'}),
