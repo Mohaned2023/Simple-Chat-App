@@ -56,7 +56,7 @@ export class UserService {
         return this.formatAuthReturn(user);
     }
 
-    async refresh( refreshToken: string ) {
+    async refresh( refreshToken: string ): Promise<FormatAuthReturnInterface> {
         try {
             // nestjs can not catch the verify error!!!
             const decoded = this.jwtService.verify( refreshToken, {ignoreExpiration: false});
@@ -66,6 +66,17 @@ export class UserService {
         } catch( error ) {
             throw new UnauthorizedException();
         }
+    }
+
+    async getInfo(username: string, user: UserEntity): Promise<UserEntity> {
+        username = username.toLowerCase();
+        if ( username.length < 3 ) throw new HttpException(`Invalid username '${username}'!`, HttpStatus.BAD_REQUEST);
+        let userInfo = await this.userRepository.findOne({where: {username}});
+        if ( !userInfo ) throw new HttpException(`Username '${username}' NOT found!`, HttpStatus.NOT_FOUND);
+        userInfo = omitObjectKeys(userInfo, ['password', 'salt']) as UserEntity;
+        if ( username != user.username ) userInfo = omitObjectKeys(userInfo, ['email', 'create_at', 'update_at']) as UserEntity;
+        this.logger.log(`User '${user.username}' obtained '${username}' information.`);
+        return userInfo;
     }
 
     private formatAuthReturn(user: UserEntity): FormatAuthReturnInterface {
