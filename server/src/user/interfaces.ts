@@ -5,3 +5,7 @@ export interface FormatAuthReturnInterface {
     refreshToken: string;
     user: UserEntity
 }
+
+export interface MessageReturnInterface {
+    message: string
+}

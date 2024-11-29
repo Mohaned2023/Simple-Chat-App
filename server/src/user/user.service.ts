@@ -13,10 +13,12 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from './dtos/create.dto';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
-import { FormatAuthReturnInterface } from './interfaces';
+import { FormatAuthReturnInterface, MessageReturnInterface } from './interfaces';
 import { omitObjectKeys } from 'src/utils/omit.util';
 import { JwtPayloadInterface } from 'src/auth/interfaces';
 import { LoginDto } from './dtos/login.dto';
+import { UpdateUserDto } from './dtos/update.dto';
+import { userInfo } from 'os';
 
 @Injectable()
 export class UserService {
@@ -77,6 +79,51 @@ export class UserService {
         if ( username != user.username ) userInfo = omitObjectKeys(userInfo, ['email', 'create_at', 'update_at']) as UserEntity;
         this.logger.log(`User '${user.username}' obtained '${username}' information.`);
         return userInfo;
+    }
+
+    async update(username: string, updateUserDto: UpdateUserDto, user: UserEntity): Promise<UserEntity> {
+        username = username.toLowerCase();
+        const updateUserDtoKeys: string[] = Object.keys(updateUserDto);
+        if ( 
+            username.length < 3 ||
+            updateUserDtoKeys.length < 1
+        ) throw new HttpException('Username is invalid or body is missing!', HttpStatus.BAD_REQUEST);
+        if ( user.username !== username ) {
+            // This user can not update another user.
+            this.logger.warn(`User '${user.username}' tried to update '${username}'!!!`);
+            throw new UnauthorizedException(`You cann't update another user!`);
+        }
+        const updatefields: string[] = [
+            'username',
+            'password',
+            'name',
+            'gender'
+        ];
+        if ( 
+            !updateUserDtoKeys.every( (key) => updatefields.includes(key) )
+        ) throw new HttpException(`Ther is invalid fields in the body!`, HttpStatus.BAD_REQUEST);
+        const userData = await this.userRepository.findOne({where: {username} });
+        Object.assign( userData, updateUserDto);
+        if ( updateUserDto.password ) userData.password = await bcrypt.hash(updateUserDto.password, userData.salt);
+        userData.update_at = new Date();
+        this.logger.log(`User '${username}' has been updated.`);
+        return omitObjectKeys(userData, ['password', 'salt']) as UserEntity;
+    }
+
+    async delete( username: string, user: UserEntity): Promise<MessageReturnInterface> {
+        username = username.toLowerCase();
+        if ( username.length < 3 ) throw new HttpException(`Invalid username '${username}'!`, HttpStatus.BAD_REQUEST);
+        if ( user.username !== username ) {
+            // This user can not delete another user.
+            this.logger.warn(`User '${user.username}' tried to delete '${username}'!!!`);
+            throw new UnauthorizedException(`You cann't delete another user!`);
+        }
+        const {affected} = await this.userRepository.delete({ username });
+        if ( affected < 0 ) throw new HttpException(`User '${username}' NOT found!`, HttpStatus.NOT_FOUND);
+        this.logger.log(`User '${username}' has been deleted.`);
+        return {
+            message: `The user '${username}' deleted successfully.`
+        }
     }
 
     private formatAuthReturn(user: UserEntity): FormatAuthReturnInterface {

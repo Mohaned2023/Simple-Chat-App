@@ -1,9 +1,11 @@
 import { 
     Body, 
     Controller, 
+    Delete, 
     Get, 
     Logger, 
     Param, 
+    Patch, 
     Post, 
     Req, 
     Res, 
@@ -13,7 +15,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dtos/create.dto';
-import { FormatAuthReturnInterface } from './interfaces';
+import { FormatAuthReturnInterface, MessageReturnInterface } from './interfaces';
 import { Request, Response } from 'express';
 import { refreshTokenCookieConfig } from 'src/config/cookies.config';
 import { omitObjectKeys } from 'src/utils/omit.util';
@@ -21,6 +23,7 @@ import { LoginDto } from './dtos/login.dto';
 import { JwtAuthGuard } from 'src/auth/jwt.guard';
 import { GetUser } from './decorators/get-user.decorator';
 import { UserEntity } from './entities/user.entity';
+import { UpdateUserDto } from './dtos/update.dto';
 
 @Controller('user')
 export class UserController {
@@ -47,7 +50,7 @@ export class UserController {
         this.logger.log(`POST '${this.ApiPath}/login' to login '${loginDto.username}'.`);
         const data: FormatAuthReturnInterface = await this.userService.login(loginDto);
         res.cookie('refreshToken', data.refreshToken, refreshTokenCookieConfig);
-        res.status(201).json(omitObjectKeys(data, ['refreshToken']));
+        res.status(200).json(omitObjectKeys(data, ['refreshToken']));
     }
 
     @Get('refresh')
@@ -60,7 +63,7 @@ export class UserController {
         if ( !refreshToken ) throw new UnauthorizedException();
         const data: FormatAuthReturnInterface = await this.userService.refresh(refreshToken);
         res.cookie('refreshToken', data.refreshToken, refreshTokenCookieConfig);
-        res.status(201).json(omitObjectKeys(data, ['refreshToken']));
+        res.status(200).json(omitObjectKeys(data, ['refreshToken']));
     }
 
     @UseGuards(JwtAuthGuard)
@@ -71,5 +74,26 @@ export class UserController {
     ): Promise<UserEntity> {
         this.logger.log(`GET '${this.ApiPath}/info/${username}' by '${user.username}'.` );
         return this.userService.getInfo(username, user);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Patch('update/:username')
+    update(
+        @Param('username') username: string,
+        @Body(ValidationPipe) updateUserDto: UpdateUserDto,
+        @GetUser() user: UserEntity
+    ): Promise<UserEntity> {
+        this.logger.log(`PATCH '${this.ApiPath}/udpate/${username}' by '${user.username}'.` );
+        return this.userService.update(username, updateUserDto, user);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Delete('delete/:username')
+    delete(
+        @Param('username') username: string,
+        @GetUser() user: UserEntity
+    ): Promise<MessageReturnInterface> {
+        this.logger.log(`DELETE '${this.ApiPath}/delete/${username}' by '${user.username}'.` );
+        return this.userService.delete(username, user);
     }
 }
