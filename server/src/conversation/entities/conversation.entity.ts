@@ -14,8 +14,11 @@ export class ConversationEntity extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({type: 'simple-array'})
-    participants: number[];
+    @Column()
+    userId1: number;
+    
+    @Column()
+    userId2: number;
 
     @OneToMany( () => MessageEntity, (message) => message.conversation )
     messages: string[];

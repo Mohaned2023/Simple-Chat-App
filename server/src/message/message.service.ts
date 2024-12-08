@@ -27,6 +27,7 @@ export class MessageService {
         });
         await conversation.save();
         const message = this.messageRepository.create();
+        // TODO: DELETE the conversationID form messageData and add the conversation object.
         Object.assign(message, { 
             ...messageData,
             isDelivered,
