@@ -33,5 +33,15 @@ export class ConversationService {
         return await conversation.save() ;
     }
     // get all conversations
+    async getAllUserConversations(user:UserEntity): Promise<ConversationEntity[]> {
+        const conversations = await this.conversationRepository.find({
+            where: [
+                {userId1: user.id},
+                {userId2: user.id}
+            ]
+        });
+        if ( conversations.length < 1 ) throw new NotFoundException();
+        return conversations;
+    }
     // get a conversation
 }

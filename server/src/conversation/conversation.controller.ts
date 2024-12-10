@@ -1,4 +1,4 @@
-import { Controller, Logger, Param, Post, UseGuards } from '@nestjs/common';
+import { Controller, Get, Logger, Param, Post, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt.guard';
 import { ConversationService } from './conversation.service';
 import { GetUser } from 'src/user/decorators/get-user.decorator';
@@ -21,5 +21,13 @@ export class ConversationController {
     ): Promise<ConversationEntity> {
         this.logger.log(`POST '${this.ApiPath}/${username}' by '${user.username}' to create conversation with '${username}'.`);
         return this.conversationService.create(username, user);
+    }
+
+    @Get()
+    getAllUserConversations(
+        @GetUser() user: UserEntity
+    ): Promise<ConversationEntity[]> {
+        this.logger.log(`GET '${this.ApiPath}' by '${user.username}' to get all conversations.`);
+        return this.conversationService.getAllUserConversations(user);
     }
 }
