@@ -43,5 +43,4 @@ export class ConversationService {
         if ( conversations.length < 1 ) throw new NotFoundException();
         return conversations;
     }
-    // get a conversation
 }

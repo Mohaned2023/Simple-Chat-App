@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MessageEntity } from './entities/message.entity';
 import { Repository } from 'typeorm';
 import { MessageInterface } from './interfaces';
 import { ConversationEntity } from 'src/conversation/entities/conversation.entity';
+import { UserEntity } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class MessageService {
@@ -21,13 +22,18 @@ export class MessageService {
     ): Promise<MessageEntity> {
         const conversation = await this.conversationRepository
             .findOne({where: {id: messageData.conversationId}});
+        if (!conversation) throw new NotFoundException(`conversation with id '${messageData.conversationId}' NOT found!`);
+        const userIDs: number[] = [conversation.userId1, conversation.userId2];
+        if ( !userIDs.includes(messageData.receiverId) ) 
+            throw new NotFoundException(`user with id '${messageData.receiverId}' NOT found in the conversation!`);
+        if ( !userIDs.includes(messageData.senderId) )
+            throw new UnauthorizedException("You are NOT included in the conversation!!");
         Object.assign(conversation, {
             lastMessage: messageData.body,
             lastActive: new Date()
         });
         await conversation.save();
         const message = this.messageRepository.create();
-        // TODO: DELETE the conversationID form messageData and add the conversation object.
         Object.assign(message, { 
             ...messageData,
             isDelivered,
@@ -36,13 +42,18 @@ export class MessageService {
         return await message.save();
     }
 
-    async getAll(conversationId: number): Promise<MessageEntity[]> {
-        // TODO fix: Any user can get any conversation messages!!
+    async getAll(conversationId: number, user:UserEntity ): Promise<MessageEntity[]> {
         const messages = await this.messageRepository
             .find({
                 where: {conversationId}, 
                 order: { createAt: 'ASC'}
             });
+        if(messages){
+            const userIDs: number[] = [messages[0].senderId, messages[0].receiverId];
+            if ( !userIDs.includes(user.id) )
+                throw new UnauthorizedException("You are NOT included in the conversation!!")
+            await this.setAsReaded( conversationId, messages[0].receiverId );
+        }
         return messages;
     }
 

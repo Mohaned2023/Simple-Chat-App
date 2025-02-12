@@ -20,6 +20,6 @@ export class MessageController {
         @GetUser() user: UserEntity
     ): Promise<MessageEntity[]> {
         this.logger.log(`GET '${this.ApiPath}/${conversationId}' by '${user.username}' to get all messages.`);
-        return this.messageService.getAll(conversationId)
+        return this.messageService.getAll(conversationId, user);
     }
 }
