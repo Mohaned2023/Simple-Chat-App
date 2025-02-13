@@ -7,6 +7,10 @@ import { UserService } from './user.service';
 import { ConfigModule } from '@nestjs/config';
 import { JwtStrategy } from 'src/auth/jwt.strategy';
 
+/**
+ * UserModule module use to deal with user Authentication\
+ * like: register, login, update, delete and refresh tokens.
+ */
 @Module({
     imports: [
         TypeOrmModule.forFeature([UserEntity]),

@@ -8,6 +8,10 @@ import {
     PrimaryGeneratedColumn 
 } from "typeorm";
 
+/**
+ * MessageEntity is class use to create and deal with\
+ * the TypeORM for the Messages.
+ */
 @Entity({name:"messages"})
 export class MessageEntity extends BaseEntity {
     @PrimaryGeneratedColumn()

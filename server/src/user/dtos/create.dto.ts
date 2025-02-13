@@ -9,6 +9,14 @@ import {
     MinLength 
 } from "class-validator";
 
+/**
+ * CreateUserDto is class use to create the create user DTO.
+ * @field username - the username of the creating user.
+ * @field name - the user full name.
+ * @field password - the user password.
+ * @field email - the user email.
+ * @field gender - the user gender.
+ */
 export class CreateUserDto {
     @IsNotEmpty()
     @IsString()

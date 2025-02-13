@@ -1,6 +1,9 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-
+/**
+ * UserEntity is class use to create and deal with\
+ * the TypeORM for the Users.
+ */
 @Entity( {name: 'users'} )
 export class UserEntity extends BaseEntity {
     @PrimaryGeneratedColumn()

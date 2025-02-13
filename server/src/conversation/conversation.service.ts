@@ -13,7 +13,14 @@ export class ConversationService {
             private userRepository: Repository<UserEntity>
     ) {}
 
-    // create a conversation
+    /**
+     * create method use to create a new conversation\
+     * between two users.
+     * @param targetUsername the target user. 
+     * @param user who use this method.
+     * @throws NotFoundException if the target user not found. 
+     * @returns Promise of ConversationEntity
+     */
     async create(targetUsername: string, user: UserEntity): Promise<ConversationEntity> {
         const targetUser = await this.userRepository.findOne({
             where: { username: targetUsername.toLowerCase() }
@@ -32,7 +39,13 @@ export class ConversationService {
         conversation.userId2 = targetUser.id;
         return await conversation.save() ;
     }
-    // get all conversations
+    
+    /**
+     * getAllUserConversations method use to get all conversations\
+     * are related to the specific user.
+     * @param user who use this method.
+     * @returns Promise of ConversationEntity list.
+     */
     async getAllUserConversations(user:UserEntity): Promise<ConversationEntity[]> {
         const conversations = await this.conversationRepository.find({
             where: [

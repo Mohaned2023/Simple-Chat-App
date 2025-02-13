@@ -13,6 +13,13 @@ export class MessageController {
         private messageService: MessageService
     ){}
 
+    /**
+     * getAll method use to get all message that related\
+     * to specific conversation.
+     * @param conversationId the conversation id.
+     * @param user who use this method.
+     * @returns Promise of MessageEntity list.
+     */
     @UseGuards(JwtAuthGuard)
     @Get(':conversationId')
     getAll(

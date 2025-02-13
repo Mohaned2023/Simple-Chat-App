@@ -6,6 +6,9 @@ import { JwtStrategy } from './jwt.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from 'src/user/entities/user.entity';
 
+/**
+ * This Module use for Authentication by JWT
+ */
 @Module({
     imports: [
         PassportModule.register({defaultStrategy: 'jwt'}),

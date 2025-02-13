@@ -8,12 +8,24 @@ import { ConversationEntity } from './entities/conversation.entity';
 @UseGuards(JwtAuthGuard)
 @Controller('conversation')
 export class ConversationController {
+    /**
+   * use to log the events.
+   */
     private logger: Logger = new Logger(ConversationController.name, {timestamp: true});
+    /**
+     * use to set the endpoint path.
+     */
     private readonly ApiPath = "/api/v1/conversation";
     constructor(
         private conversationService: ConversationService
     ) {}
 
+    /**
+     * create method use to create new conversation.
+     * @param user who use this method.
+     * @param username the target user.
+     * @returns Promise of ConversationEntity.
+     */
     @Post(":username")
     create (
         @GetUser() user: UserEntity,
@@ -23,6 +35,12 @@ export class ConversationController {
         return this.conversationService.create(username, user);
     }
 
+    /**
+     * getAllUserConversations method use to get all conversations\
+     * are related to the specific user.
+     * @param user who use this method.
+     * @returns Promise of ConversationEntity list.
+     */
     @Get()
     getAllUserConversations(
         @GetUser() user: UserEntity

@@ -15,14 +15,25 @@ import { WsValidationExceptionFilter } from './filters/ws-exception.filter';
 import { MessageService } from 'src/message/message.service';
 import { MessageEntity } from 'src/message/entities/message.entity';
 
+/**
+ * The Chat Gateway using the socket.io.
+ * @implements OnGatewayConnection
+ * @implements OnGatewayDisconnect
+ */
 @Injectable()
 @UseFilters(new WsValidationExceptionFilter())
 @WebSocketGateway()
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect{
 
+  /**
+   * use to log the events.
+   */
   private logger: Logger = new Logger(ChatGateway.name, {timestamp: true});
 
-
+  /**
+   * use to store the connected users with the Socket.\
+   * using the Map datatype for O(1) search, add and delete time.
+   */
   private online: Map<number, Socket> = new Map()
 
 
@@ -32,6 +43,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect{
       private readonly messageService: MessageService
     ) {}
 
+  /**
+   * handleConnection method use to handle the connection\
+   * by checking and adding user socket connection to the\
+   * online, checking coming wiht JWT verification, taking\
+   * the JWT from the pramas.
+   * @param client the client socket object.
+   * @param args
+   */
   handleConnection(client: Socket, ...args: any[]) {
     const token: string = client.handshake.query.token as string;
     if (!token) {
@@ -50,6 +69,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect{
     }
   }
 
+  /**
+   * handleMessage method use to handle the messages in the message event.
+   * @param client the client socket object.
+   * @param payload the Message object.
+   * @returns Promise of MessageEntity.
+   */
   @UsePipes(new ValidationPipe({transform: true}))
   @SubscribeMessage('message')
   async handleMessage(
@@ -71,6 +96,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect{
       return message;
   }
 
+  /**
+   * handleDisconnect method use to handle the disconnection\
+   * by deleting the client object from the online stat.
+   * @param client the client socket object.
+   */
   handleDisconnect(client: Socket) {
     this.online.delete(client.data.userId );
     this.logger.log(`Client '${client.data.username}' Disconnected.`);

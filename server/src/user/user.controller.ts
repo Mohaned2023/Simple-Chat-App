@@ -31,6 +31,10 @@ export class UserController {
     private readonly ApiPath: string = '/api/v1/user';
     constructor( private userService: UserService ) {}
 
+    /**
+     * register method use to create a new user.
+     * @param createDto the user data.
+     */
     @Post('register')
     async register( 
         @Body(ValidationPipe) createDto: CreateUserDto,
@@ -42,6 +46,10 @@ export class UserController {
         res.status(201).json(omitObjectKeys(data, ['refreshToken']));
     }
 
+    /**
+     * login method use to login the user.
+     * @param loginDto the login data.
+     */
     @Post('login')
     async login(
         @Body(ValidationPipe) loginDto: LoginDto,
@@ -53,6 +61,9 @@ export class UserController {
         res.status(200).json(omitObjectKeys(data, ['refreshToken']));
     }
 
+    /**
+     * refresh method use to refresh the JWT token.
+     */
     @Get('refresh')
     async refresh(
         @Req() req: Request,
@@ -66,6 +77,12 @@ export class UserController {
         res.status(200).json(omitObjectKeys(data, ['refreshToken']));
     }
 
+    /**
+     * getInfo method use to get user information.
+     * @param username the target user username.
+     * @param user who use this method.
+     * @returns Promise of UserEntity.
+     */
     @UseGuards(JwtAuthGuard)
     @Get('info/:username')
     getInfo(
@@ -76,6 +93,13 @@ export class UserController {
         return this.userService.getInfo(username, user);
     }
 
+    /**
+     * update method use to update use informaion.
+     * @param username the target user username.
+     * @param updateUserDto the update data.
+     * @param user who use this method.
+     * @returns Promise of UserEntity.
+     */
     @UseGuards(JwtAuthGuard)
     @Patch('update/:username')
     update(
@@ -87,6 +111,12 @@ export class UserController {
         return this.userService.update(username, updateUserDto, user);
     }
 
+    /**
+     * delete method use to delete user.
+     * @param username the target user username.
+     * @param user who use this method.
+     * @returns Promise of MessageReturnInterface
+     */
     @UseGuards(JwtAuthGuard)
     @Delete('delete/:username')
     delete(

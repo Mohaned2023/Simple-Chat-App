@@ -7,6 +7,10 @@ import { ConversationController } from './conversation.controller';
 import { AuthModule } from 'src/auth/auth.module';
 import { JwtStrategy } from 'src/auth/jwt.strategy';
 
+/**
+ * ConversationModule module use to deal with conversations\
+ * creation and getting.
+ */
 @Module({
   imports: [
     TypeOrmModule.forFeature([ConversationEntity, UserEntity]),

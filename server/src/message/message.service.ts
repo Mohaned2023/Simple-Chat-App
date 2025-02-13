@@ -15,6 +15,18 @@ export class MessageService {
         private conversationRepository: Repository<ConversationEntity>
     ) {}
 
+    /**
+     * create method use to create a new message.
+     * @param messageData the message data.
+     * @param isDelivered if message is delivered.
+     * @param isRead if message is read.
+     * ---
+     * @throws NotFoundException if conversation not found.
+     * @throws NotFoundException if receiver not found in the conversation.
+     * @throws UnauthorizedException if sender not found in the conversation.
+     * ---
+     * @returns Promise of MessageEntity.
+     */
     async create(
         messageData: MessageInterface, 
         isDelivered: boolean=false, 
@@ -42,6 +54,16 @@ export class MessageService {
         return await message.save();
     }
 
+    /**
+     * getAll method use to get all message that related\
+     * to specific conversation.
+     * @param conversationId the conversation id.
+     * @param user who use this method.
+     * ---
+     * @throws UnauthorizedException if user is not included in the conversation.
+     * ---
+     * @returns Promise of MessageEntity list.
+     */
     async getAll(conversationId: number, user:UserEntity ): Promise<MessageEntity[]> {
         const messages = await this.messageRepository
             .find({
@@ -57,6 +79,11 @@ export class MessageService {
         return messages;
     }
 
+    /**
+     * setAsReaded method use to set all unreaded message to readed.
+     * @param conversationId the conversation id
+     * @param receiverId the receiver id.
+     */
     async setAsReaded(conversationId: number, receiverId: number): Promise<void> {
         await this.messageRepository
             .update(

@@ -9,6 +9,10 @@ import {
     UpdateDateColumn 
 } from "typeorm";
 
+/**
+ * ConversationEntity is class use to create and deal with\
+ * the TypeORM for the Conversation.
+ */
 @Entity( {name: 'conversations'} )
 export class ConversationEntity extends BaseEntity {
     @PrimaryGeneratedColumn()

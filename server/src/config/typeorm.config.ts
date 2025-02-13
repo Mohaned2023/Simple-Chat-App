@@ -4,7 +4,9 @@ import { ConversationEntity } from "src/conversation/entities/conversation.entit
 import { MessageEntity } from "src/message/entities/message.entity";
 import { UserEntity } from "src/user/entities/user.entity";
 
-
+/**
+ * typeormConfig object use to config the TypeOrmModule
+ */
 export const typeormConfig: TypeOrmModuleAsyncOptions = {
     imports: [ConfigModule],
     inject: [ConfigService],
