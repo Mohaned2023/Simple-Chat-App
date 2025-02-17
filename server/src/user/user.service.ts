@@ -4,6 +4,7 @@ import {
     Injectable, 
     InternalServerErrorException, 
     Logger, 
+    NotFoundException, 
     UnauthorizedException 
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -124,6 +125,7 @@ export class UserService {
      * @throws HttpException with BAD REQUEST - if username invalid.
      * @throws UnauthorizedException - if user username != target username.
      * @throws HttpException with BAD REQUEST - if ther is invalid fields in the body.
+     * @throws NotFoundException - if the user not found.
      * ---
      * @returns Promise of UserEntity.
      */
@@ -149,6 +151,7 @@ export class UserService {
             !updateUserDtoKeys.every( (key) => updatefields.includes(key) )
         ) throw new HttpException(`Ther is invalid fields in the body!`, HttpStatus.BAD_REQUEST);
         const userData = await this.userRepository.findOne({where: {username} });
+        if (!userData) throw new NotFoundException(`User '${username}' NOT found!!`);
         Object.assign( userData, updateUserDto);
         if ( updateUserDto.password ) userData.password = await bcrypt.hash(updateUserDto.password, userData.salt);
         userData.update_at = new Date();

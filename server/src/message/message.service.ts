@@ -61,6 +61,7 @@ export class MessageService {
      * @param user who use this method.
      * ---
      * @throws UnauthorizedException if user is not included in the conversation.
+     * @throws NotFoundException if ther is no messages.
      * ---
      * @returns Promise of MessageEntity list.
      */
@@ -70,6 +71,7 @@ export class MessageService {
                 where: {conversationId}, 
                 order: { createAt: 'ASC'}
             });
+        if (messages.length < 1) throw new NotFoundException("Ther is NO messages!!");
         if(messages){
             const userIDs: number[] = [messages[0].senderId, messages[0].receiverId];
             if ( !userIDs.includes(user.id) )
