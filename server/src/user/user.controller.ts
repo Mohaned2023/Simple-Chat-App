@@ -24,6 +24,7 @@ import { JwtAuthGuard } from 'src/auth/jwt.guard';
 import { GetUser } from './decorators/get-user.decorator';
 import { UserEntity } from './entities/user.entity';
 import { UpdateUserDto } from './dtos/update.dto';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('user')
 export class UserController {

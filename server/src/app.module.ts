@@ -8,11 +8,14 @@ import { UserModule } from './user/user.module';
 import { MessageModule } from './message/message.module';
 import { ConversationModule } from './conversation/conversation.module';
 import { ChatGateway } from './chat/chat.gateway';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { rateLimitConfig } from './config/rate-limit.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot(envConfig),
     TypeOrmModule.forRootAsync(typeormConfig),
+    ThrottlerModule.forRoot(rateLimitConfig),
     AuthModule,
     UserModule,
     MessageModule,

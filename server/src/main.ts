@@ -11,6 +11,10 @@ async function bootstrap() {
   const PORT: number = 0|configService.get<number>('CHATAPP_SERVER_PORT', 3000);
   app.setGlobalPrefix('api/v1');
   app.use(cookiesParser());
+  app.enableCors({
+    origin: '*',
+    credentials: true
+  });
   await app.listen(PORT);
   logger.log(`The App Running in Port ${PORT}`);
 }

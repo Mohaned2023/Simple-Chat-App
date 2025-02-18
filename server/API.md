@@ -99,6 +99,7 @@ This server has a limited number of APIs as well as WebSocket: `Socket.io`.
         - OK    `201 - Created`: User created.
         - ERROR `302 - Found`: Username or Email is found in the database!.
         - ERROR `400 - Bad Request`: Request body is missing some fields.
+        - ERROR `429 - Too Many Requests`: More than 3req/1s or 10req/20s or 30req/1m.
         - ERROR `500 - Internal Server Error`: Backend failure -> submit an issue in github.
 ---
 #### Login
@@ -149,6 +150,7 @@ This server has a limited number of APIs as well as WebSocket: `Socket.io`.
         - ERROR `400 - Bad Request`: Request body is missing some fields.
         - ERROR `401 - Unauthorized`: Invalid password.
         - ERROR `404 - Not Found`: User with username not found.
+        - ERROR `429 - Too Many Requests`: More than 3req/1s or 10req/20s or 30req/1m.
         - ERROR `500 - Internal Server Error`: Backend failure -> submit an issue in github.
 ---
 #### Get New Access Token
@@ -178,6 +180,7 @@ This server has a limited number of APIs as well as WebSocket: `Socket.io`.
         - OK `200 - Ok`: ok.
         - ERROR `401 - Unauthorized`: Invalid refresh token.
         - ERROR `404 - Not Found`: User not found.
+        - ERROR `429 - Too Many Requests`: More than 3req/1s or 10req/20s or 30req/1m.
         - ERROR `500 - Internal Server Error`: Backend failure -> submit an issue in github.
     - Notes:
         - status code 401 -> the user has been inactive for more than 7 days or has not logged in.
@@ -232,6 +235,7 @@ This server has a limited number of APIs as well as WebSocket: `Socket.io`.
         - ERROR `400 - Bad Request`: Invalid username.
         - ERROR `401 - Unauthorized`: Invalid accessToken.
         - ERROR `404 - Not Found`: User with username not found.
+        - ERROR `429 - Too Many Requests`: More than 3req/1s or 10req/20s or 30req/1m.
         - ERROR `500 - Internal Server Error`: Backend failure -> submit an issue in github.
 ---
 #### Update User Information
@@ -309,6 +313,7 @@ This server has a limited number of APIs as well as WebSocket: `Socket.io`.
         - ERROR `401 - Unauthorized`: Invalid accessToken.
         - ERROR `403 - Forbidden`: User tried to update another account.
         - ERROR `404 - Not Found`: User with username not found.
+        - ERROR `429 - Too Many Requests`: More than 3req/1s or 10req/20s or 30req/1m.
         - ERROR `500 - Internal Server Error`: Backend failure -> submit an issue in github.
 ---
 #### Delete User
@@ -346,6 +351,7 @@ This server has a limited number of APIs as well as WebSocket: `Socket.io`.
         - ERROR `401 - Unauthorized`: Invalid accessToken.
         - ERROR `403 - Forbidden`: User tried to delete another account.
         - ERROR `404 - Not Found`: User with username not found.
+        - ERROR `429 - Too Many Requests`: More than 3req/1s or 10req/20s or 30req/1m.
         - ERROR `500 - Internal Server Error`: Backend failure -> submit an issue in github.
 ---
 ### Conversation:
@@ -387,6 +393,7 @@ This server has a limited number of APIs as well as WebSocket: `Socket.io`.
         - OK    `201 - Created`: User created.
         - ERROR `401 - Unauthorized`: Invalid accessToken.
         - ERROR `404 - Not Found`: User with username not found.
+        - ERROR `429 - Too Many Requests`: More than 3req/1s or 10req/20s or 30req/1m.
         - ERROR `500 - Internal Server Error`: Backend failure -> submit an issue in github.
 ---
 #### Get All Conversation
@@ -429,6 +436,7 @@ This server has a limited number of APIs as well as WebSocket: `Socket.io`.
         - OK    `200`: Ok.
         - ERROR `401 - Unauthorized`: Invalid accessToken.
         - ERROR `404 - Not Found`: No conversations.
+        - ERROR `429 - Too Many Requests`: More than 3req/1s or 10req/20s or 30req/1m.
         - ERROR `500 - Internal Server Error`: Backend failure -> submit an issue in github.
 ---
 ### Message:
@@ -475,6 +483,7 @@ This server has a limited number of APIs as well as WebSocket: `Socket.io`.
         - OK    `200`: Ok.
         - ERROR `401 - Unauthorized`: Invalid accessToken.
         - ERROR `404 - Not Found`: No conversations.
+        - ERROR `429 - Too Many Requests`: More than 3req/1s or 10req/20s or 30req/1m.
         - ERROR `500 - Internal Server Error`: Backend failure -> submit an issue in github.
 
 # WebSocket (Socket.io):
