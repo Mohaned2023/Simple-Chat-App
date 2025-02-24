@@ -9,6 +9,7 @@ class ConversationsScreen(BaseScreen):
         self.conversations: str = ""
 
     def on_mount(self):
+        self.app.refresh()
         self.set_conversations()
         self.set_content(self.conversations)
 
