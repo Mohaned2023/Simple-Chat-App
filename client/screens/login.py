@@ -46,8 +46,10 @@ class LoginScreen(BaseScreen):
             }
         )
         if res.status_code == 200:
-            Config.set_access_token(res.json()['accessToken'])
-            Config.set_refresh_token(res.cookies.get('refreshToken'))
+            Config.set_tokens(
+                accessToken= res.json()['accessToken'],
+                refreshToken= res.cookies.get('refreshToken')
+            )
             self.app.switch_screen("conversations")
         elif res.status_code == 401:
             self.query_one("#content").update(f"Error: Invalid password!")

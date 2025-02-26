@@ -1,3 +1,5 @@
+import gc
+
 from textual.app           import App
 from commands.handler      import CommandHandler
 from screens.chat          import ChatScreen
@@ -25,8 +27,10 @@ class ChatApp(App):
         self.push_screen("conversations")
 
     def switch_screen(self, screen_name):
+        del self.screen_stack[-1]
+        gc.collect()
         self.pop_screen()
-        self.push_screen(screen_name)
+        self.push_screen(self.SCREENS[screen_name]())
 
 if __name__=="__main__":
     ChatApp().run()
