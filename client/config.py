@@ -11,6 +11,7 @@ class Config:
     BASE_API: str = '/api/v1'
     CONVERSATIONS_API: str = SERVER_URL + BASE_API + '/conversation'
     LOGIN_API: str = SERVER_URL + BASE_API + '/user/login'
+    REFRESH_API: str = SERVER_URL + BASE_API + '/user/refresh'
 
     @staticmethod
     def get_tokens() -> dict[str:str]:
@@ -23,5 +24,5 @@ class Config:
         with open(Config.COOKIES_FILE_PATH, 'w', encoding='utf-8') as json_file:
             json.dump({
                 "accessToken": f"Bearer {accessToken}",
-                "refreshToken": f"Bearer {refreshToken}"
+                "refreshToken": f"{refreshToken}"
             }, json_file)

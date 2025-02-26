@@ -14,14 +14,22 @@ class ConversationsScreen(BaseScreen):
         self.set_content(self.conversations)
 
     def set_conversations(self) -> None:
-        accessToken, _ = Config.get_tokens()
+        accessToken, refreshToken = Config.get_tokens()
         res = requests.get(Config.CONVERSATIONS_API, headers={ 'Authorization': accessToken })
         if res.status_code == 200:
             for i in res.json():
                 self.conversations += f"{i['id']}: {i['lastMessage']}\n  Last Active: {i['lastActive']}\n\n"
         elif res.status_code == 401:
             # TODO: Add notification for login or register.
-            self.app.switch_screen("login")
+            res = requests.get(Config.REFRESH_API, cookies={ 'refreshToken': refreshToken })
+            if res.status_code == 200:
+                Config.set_tokens(
+                    accessToken= res.json()['accessToken'],
+                    refreshToken= res.cookies.get('refreshToken')
+                )
+                self.app.switch_screen("conversations")
+            elif res.status_code in [401, 404]: 
+                self.app.switch_screen("login")
         elif res.status_code == 404:
             self.conversations = "No Conversations to show!!!"
         elif res.status_code in [429, 500] :
