@@ -12,6 +12,7 @@ class Config:
     CONVERSATIONS_API: str = SERVER_URL + BASE_API + '/conversation'
     LOGIN_API: str = SERVER_URL + BASE_API + '/user/login'
     REFRESH_API: str = SERVER_URL + BASE_API + '/user/refresh'
+    REGISTER_API: str = SERVER_URL + BASE_API + '/user/register'
 
     @staticmethod
     def get_tokens() -> dict[str:str]:
