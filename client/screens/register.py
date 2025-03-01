@@ -85,10 +85,12 @@ class RegisterScreen(BaseScreen):
     def register(self, register_data: dict) -> bool:
         res = requests.post(Config.REGISTER_API, json=register_data)
         if res.status_code == 201:
+            res_json: dict = res.json()
             Config.set_tokens(
-                accessToken= res.json()['accessToken'],
+                accessToken= res_json['accessToken'],
                 refreshToken= res.cookies.get('refreshToken')
             )
+            Config.set_user(res_json['user'])
             return True
         elif res.status_code == 302:
             self.error_message = "Error: Username or Email is found in the database!\n"

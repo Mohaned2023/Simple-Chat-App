@@ -23,10 +23,12 @@ class ConversationsScreen(BaseScreen):
             # TODO: Add notification for login or register.
             res = requests.get(Config.REFRESH_API, cookies={ 'refreshToken': refreshToken })
             if res.status_code == 200:
+                res_json: dict = res.json()
                 Config.set_tokens(
-                    accessToken= res.json()['accessToken'],
+                    accessToken= res_json['accessToken'],
                     refreshToken= res.cookies.get('refreshToken')
                 )
+                Config.set_user(res_json['user'])
                 self.app.switch_screen("conversations")
             elif res.status_code in [401, 404]: 
                 self.app.switch_screen("login")

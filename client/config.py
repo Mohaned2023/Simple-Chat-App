@@ -7,6 +7,7 @@ load_dotenv()
 
 class Config:
     COOKIES_FILE_PATH:str = './data/cookies.json'
+    USER_FILE_PATH:str = './data/user.json'
     SERVER_URL: str = os.getenv('CHATAPP_BACKEND_URL')
     BASE_API: str = '/api/v1'
     CONVERSATIONS_API: str = SERVER_URL + BASE_API + '/conversation'
@@ -27,3 +28,13 @@ class Config:
                 "accessToken": f"Bearer {accessToken}",
                 "refreshToken": f"{refreshToken}"
             }, json_file)
+
+    @staticmethod
+    def get_user() -> None:
+        with open(Config.USER_FILE_PATH, 'r', encoding='utf-8') as json_file:
+            return json.load(json_file)
+
+    @staticmethod
+    def set_user(user: dict) -> None:
+        with open(Config.USER_FILE_PATH, 'w', encoding='utf-8') as json_file:
+            json.dump(user, json_file)
