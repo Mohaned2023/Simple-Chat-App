@@ -24,7 +24,7 @@ class RegisterScreen(BaseScreen):
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
         yield Container(
-            Static("Login..", id="content"),
+            Static("Register..", id="content"),
             Input(placeholder="Full Name", id="name"),
             Input(placeholder="Email", id="email"),
             Input(placeholder="Username", id="username"),
@@ -62,7 +62,7 @@ class RegisterScreen(BaseScreen):
             if not self.register(register_data):
                 self.query_one("#content").update(self.error_message)
                 return 
-        elif event.button.id == "login_btr":
+        elif event.button.id == "login_btr" or event.button.id == "back_btr":
             self.app.switch_screen("login")
         self.app.switch_screen("conversations")
 
