@@ -14,6 +14,7 @@ class Config:
     LOGIN_API: str = SERVER_URL + BASE_API + '/user/login'
     REFRESH_API: str = SERVER_URL + BASE_API + '/user/refresh'
     REGISTER_API: str = SERVER_URL + BASE_API + '/user/register'
+    UPDATE_API: str = SERVER_URL + BASE_API + '/user/update/:username'
 
     @staticmethod
     def get_tokens() -> dict[str:str]:
@@ -30,7 +31,7 @@ class Config:
             }, json_file)
 
     @staticmethod
-    def get_user() -> None:
+    def get_user() -> dict:
         with open(Config.USER_FILE_PATH, 'r', encoding='utf-8') as json_file:
             return json.load(json_file)
 

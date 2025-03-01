@@ -95,7 +95,7 @@ class RegisterScreen(BaseScreen):
         elif res.status_code == 302:
             self.error_message = "Error: Username or Email is found in the database!\n"
         elif res.status_code == 400:
-            self.error_message = f"{str(res.json())}\n{register_data['gender']}\nError: Some fields are missing!\n"
+            self.error_message = "Error: Some fields are missing!\n"
         elif res.status_code in [429, 500]:
             self.error_message = "Server Error: Too many requests!!\n"
         return False
