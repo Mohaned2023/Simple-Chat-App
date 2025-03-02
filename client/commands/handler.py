@@ -14,7 +14,8 @@ class CommandHandler:
             self.app.switch_screen("register")
         elif command.startswith(":update"):
             self.app.switch_screen("update")
-        elif command.startswith(":search"):
-            self.app.switch_screen("user_info")
+        elif command.startswith(":info"):
+            args: list[str] = command.split(' ')
+            self.app.switch_screen("user_info", username= None if len(args) < 2 else args[1] )
         else: 
             ...

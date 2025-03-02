@@ -15,9 +15,10 @@ class Config:
     REFRESH_API: str = SERVER_URL + BASE_API + '/user/refresh'
     REGISTER_API: str = SERVER_URL + BASE_API + '/user/register'
     UPDATE_API: str = SERVER_URL + BASE_API + '/user/update/:username'
+    USER_INFO_API: str = SERVER_URL + BASE_API + '/user/info/:username'
 
     @staticmethod
-    def get_tokens() -> dict[str:str]:
+    def get_tokens() -> (str, str):
         with open(Config.COOKIES_FILE_PATH, 'r', encoding='utf-8') as json_file:
             tokens: dict[str:str] = json.load(json_file)
             return tokens['accessToken'], tokens['refreshToken']

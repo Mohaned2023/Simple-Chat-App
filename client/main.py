@@ -26,11 +26,11 @@ class ChatApp(App):
     def on_mount(self):
         self.push_screen("conversations")
 
-    def switch_screen(self, screen_name):
+    def switch_screen(self, screen_name, **kwargs):
         del self.screen_stack[-1]
         gc.collect()
         self.pop_screen()
-        self.push_screen(self.SCREENS[screen_name]())
+        self.push_screen(self.SCREENS[screen_name](**kwargs))
 
 if __name__=="__main__":
     ChatApp().run()
