@@ -156,7 +156,7 @@ export class UserService {
         if ( updateUserDto.password ) userData.password = await bcrypt.hash(updateUserDto.password, userData.salt);
         userData.update_at = new Date();
         this.logger.log(`User '${username}' has been updated.`);
-        return omitObjectKeys(userData, ['password', 'salt']) as UserEntity;
+        return omitObjectKeys(await userData.save(), ['password', 'salt']) as UserEntity;
     }
 
     /**
