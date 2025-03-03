@@ -129,7 +129,7 @@ export class UserService {
      * ---
      * @returns Promise of UserEntity.
      */
-    async update(username: string, updateUserDto: UpdateUserDto, user: UserEntity): Promise<UserEntity> {
+    async update(username: string, updateUserDto: UpdateUserDto, user: UserEntity): Promise<FormatAuthReturnInterface> {
         username = username.toLowerCase();
         const updateUserDtoKeys: string[] = Object.keys(updateUserDto);
         if ( 
@@ -156,7 +156,7 @@ export class UserService {
         if ( updateUserDto.password ) userData.password = await bcrypt.hash(updateUserDto.password, userData.salt);
         userData.update_at = new Date();
         this.logger.log(`User '${username}' has been updated.`);
-        return omitObjectKeys(await userData.save(), ['password', 'salt']) as UserEntity;
+        return this.formatAuthReturn(await userData.save());
     }
 
     /**

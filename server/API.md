@@ -297,13 +297,16 @@ This server has a limited number of APIs as well as WebSocket: `Socket.io`.
     - Example:
     ```json
     {
-        "id": 29,
-        "username": "mohaned2023",
-        "name": "Mohaned Sherhan (Mr.x)",
-        "email": "mohaned2023@gmail.com",
-        "gender": true,
-        "create_at": "2024-11-15 15:13:46.660422",
-        "update_at": "2024-12-01 15:13:46.660422",
+        "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1vaGFuZWQyMDIzIiwiaWF0IjoxNzMxNjc1MzM0LCJleHAiOjE3MzE2ODYxMzR9.MEZmEDKvl7giIH7whhWMRoxTK8v4lz8jgDytLPDcm48",
+        "user": {
+            "id": 29,
+            "username": "mohaned2023",
+            "name": "Mohaned Sherhan (Mr.x)",
+            "email": "mohaned2023@gmail.com",
+            "gender": true,
+            "create_at": "2024-11-15 15:13:46.660422",
+            "update_at": "2024-12-01 15:13:46.660422"
+        }
     }
     ```
     - Status codes:

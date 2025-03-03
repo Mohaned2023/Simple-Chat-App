@@ -103,13 +103,16 @@ export class UserController {
      */
     @UseGuards(JwtAuthGuard)
     @Patch('update/:username')
-    update(
+    async update(
         @Param('username') username: string,
         @Body(ValidationPipe) updateUserDto: UpdateUserDto,
-        @GetUser() user: UserEntity
-    ): Promise<UserEntity> {
+        @GetUser() user: UserEntity,
+        @Res() res: Response
+    ): Promise<void> {
         this.logger.log(`PATCH '${this.ApiPath}/udpate/${username}' by '${user.username}'.` );
-        return this.userService.update(username, updateUserDto, user);
+        const data: FormatAuthReturnInterface = await this.userService.update(username, updateUserDto, user);
+        res.cookie('refreshToken', data.refreshToken, refreshTokenCookieConfig);
+        res.status(200).json(omitObjectKeys(data, ['refreshToken']));
     }
 
     /**
