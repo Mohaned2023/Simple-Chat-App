@@ -94,13 +94,11 @@ class UpdateScreen(BaseScreen):
         )
         if res.status_code == 200:
             res_json: dict = res.json()
-            ## Backend Issue: Return the accessToken, refreshToken and user
-            # Config.set_tokens(
-            #     accessToken= res_json['accessToken'],
-            #     refreshToken= res.cookies.get('refreshToken')
-            # )
-            ## Right now it returns the user information only...
-            Config.set_user(res_json) # After close the issue set res_json['user']
+            Config.set_tokens(
+                accessToken= res_json['accessToken'],
+                refreshToken= res.cookies.get('refreshToken')
+            )
+            Config.set_user(res_json['user'])
             return True
         elif res.status_code == 302:
             self.error_message = "Error: Username is found in the database!\n"
