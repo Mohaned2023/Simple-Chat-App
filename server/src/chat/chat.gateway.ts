@@ -34,7 +34,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect{
    * use to store the connected users with the Socket.\
    * using the Map datatype for O(1) search, add and delete time.
    */
-  private online: Map<number, Socket> = new Map()
+  private online: Map<string, Socket> = new Map()
 
 
   constructor(
@@ -59,9 +59,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect{
     }
     try {
       const ver = this.jwtService.verify(token, {secret: this.configService.get<string>("CHATAPP_JWT_SECRET") });
-      client.data.userId = ver.id;
       client.data.username = ver.username;
-      this.online.set(client.data.userId, client);
+      this.online.set(client.data.username, client);
       this.logger.log(`Client '${client.data.username}' Connected.`);
     } catch (error) {
       client.emit('error', error);
@@ -81,13 +80,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect{
       @ConnectedSocket() client: Socket, 
       @MessageBody() payload: MessageDto
     ): Promise<MessageEntity> {
-      if (payload.receiverId == client.data.userId) {
+      if (payload.receiverUsername == client.data.username) {
         client.emit('error', { message: 'Can NOT send message to your self!'});
         return;
       }
-      const receiver = this.online.get(payload.receiverId);
+      const receiver = this.online.get(payload.receiverUsername);
       const message: MessageEntity = await this.messageService.create( 
-          { senderId: client.data.userId, ...payload },
+          { senderUsername: client.data.username, ...payload },
           !!receiver
         );
         if (receiver) {
@@ -102,7 +101,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect{
    * @param client the client socket object.
    */
   handleDisconnect(client: Socket) {
-    this.online.delete(client.data.userId );
+    this.online.delete(client.data.username);
     this.logger.log(`Client '${client.data.username}' Disconnected.`);
   }
 }

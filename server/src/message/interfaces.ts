@@ -4,7 +4,7 @@
  */
 export interface MessageInterface {
     conversationId: number;
-    receiverId: number;
-    senderId: number;
+    receiverUsername: string;
+    senderUsername: string;
     body: string;
 }

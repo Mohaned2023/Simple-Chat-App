@@ -35,10 +35,10 @@ export class MessageService {
         const conversation = await this.conversationRepository
             .findOne({where: {id: messageData.conversationId}});
         if (!conversation) throw new NotFoundException(`conversation with id '${messageData.conversationId}' NOT found!`);
-        const userIDs: number[] = [conversation.userId1, conversation.userId2];
-        if ( !userIDs.includes(messageData.receiverId) ) 
-            throw new NotFoundException(`user with id '${messageData.receiverId}' NOT found in the conversation!`);
-        if ( !userIDs.includes(messageData.senderId) )
+        const usernames: string[] = [conversation.user1, conversation.user2];
+        if ( !usernames.includes(messageData.receiverUsername) ) 
+            throw new NotFoundException(`user '${messageData.receiverUsername}' NOT found in the conversation!`);
+        if ( !usernames.includes(messageData.senderUsername) )
             throw new UnauthorizedException("You are NOT included in the conversation!!");
         Object.assign(conversation, {
             lastMessage: messageData.body,
@@ -73,10 +73,10 @@ export class MessageService {
             });
         if (messages.length < 1) throw new NotFoundException("Ther is NO messages!!");
         if(messages){
-            const userIDs: number[] = [messages[0].senderId, messages[0].receiverId];
-            if ( !userIDs.includes(user.id) )
+            const usernames: string[] = [messages[0].senderUsername, messages[0].receiverUsername];
+            if ( !usernames.includes(user.username) )
                 throw new UnauthorizedException("You are NOT included in the conversation!!")
-            await this.setAsReaded( conversationId, messages[0].receiverId );
+            await this.setAsReaded( conversationId, messages[0].receiverUsername );
         }
         return messages;
     }
@@ -86,13 +86,13 @@ export class MessageService {
      * @param conversationId the conversation id
      * @param receiverId the receiver id.
      */
-    async setAsReaded(conversationId: number, receiverId: number): Promise<void> {
+    async setAsReaded(conversationId: number, receiverUsername: string): Promise<void> {
         await this.messageRepository
             .update(
             {
                 conversationId,
                 isRead: false,
-                receiverId
+                receiverUsername
             }, 
             {isRead: true} 
         );

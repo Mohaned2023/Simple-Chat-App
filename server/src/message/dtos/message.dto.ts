@@ -13,7 +13,7 @@ export class MessageDto {
 
     @IsNotEmpty()
     @IsNumber()
-    receiverId: number;
+    receiverUsername: string;
 
     @IsNotEmpty()
     @IsString()

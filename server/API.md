@@ -385,8 +385,8 @@ This server has a limited number of APIs as well as WebSocket: `Socket.io`.
     ```json
     {
         "id": 29,
-        "userId1": 12,
-        "userId2": 1,
+        "user1": "mohaned",
+        "user2": "mohammed",
         "lastMessage": "Hi, my name is mohaned.",
         "lastActive": "2024-11-15 15:13:46.660422",
         "createAt": "2024-11-15 15:13:46.660422",
@@ -426,8 +426,8 @@ This server has a limited number of APIs as well as WebSocket: `Socket.io`.
     [
         {
             "id": 29,
-            "userId1": 12,
-            "userId2": 1,
+            "user1": "mohaned",
+            "user2": "mohammed",
             "lastMessage": "Hi, my name is mohaned.",
             "lastActive": "2024-11-15 15:13:46.660422",
             "createAt": "2024-11-15 15:13:46.660422",
@@ -471,8 +471,8 @@ This server has a limited number of APIs as well as WebSocket: `Socket.io`.
     [
         {
             "id": 1231,
-            "senderId": 1,
-            "receiverId": 12,
+            "senderUsername": "mohaned",
+            "receiverUsername": "mohammed",
             "conversationId": 19,
             "body": "Hi, my name is mohaned.",
             "isDelivered": true,
@@ -511,7 +511,7 @@ This server has a limited number of APIs as well as WebSocket: `Socket.io`.
     ```json
     {
         "conversationId": 19,
-        "receiverId": 12,
+        "receiverUsername": "mohammed",
         "body": "Hi, my name is mohaned"
     }
     ```
@@ -521,8 +521,8 @@ This server has a limited number of APIs as well as WebSocket: `Socket.io`.
     ```json
     {
         "id": 1231,
-        "senderId": 1,
-        "receiverId": 12,
+        "senderUsername": "mohaned",
+        "receiverUsername": "mohammed",
         "conversationId": 19,
         "body": "Hi, my name is mohaned.",
         "isDelivered": true,

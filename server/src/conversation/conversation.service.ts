@@ -29,14 +29,14 @@ export class ConversationService {
         let conversation = await this.conversationRepository
             .findOne({
                 where: [
-                    {userId1: user.id, userId2: targetUser.id},
-                    {userId1: targetUser.id, userId2: user.id}
+                    {user1: user.username, user2: targetUsername},
+                    {user1: targetUsername, user2: user.username}
                 ]
             });
         if ( conversation ) return conversation;
         conversation = this.conversationRepository.create();
-        conversation.userId1 = user.id;
-        conversation.userId2 = targetUser.id;
+        conversation.user1 = user.username;
+        conversation.user2 = targetUsername;
         return await conversation.save() ;
     }
     
@@ -49,8 +49,8 @@ export class ConversationService {
     async getAllUserConversations(user:UserEntity): Promise<ConversationEntity[]> {
         const conversations = await this.conversationRepository.find({
             where: [
-                {userId1: user.id},
-                {userId2: user.id}
+                {user1: user.username},
+                {user2: user.username}
             ]
         });
         if ( conversations.length < 1 ) throw new NotFoundException();

@@ -19,10 +19,10 @@ export class ConversationEntity extends BaseEntity {
     id: number;
 
     @Column()
-    userId1: number;
+    user1: string;
     
     @Column()
-    userId2: number;
+    user2: string;
 
     @OneToMany( () => MessageEntity, (message) => message.conversation )
     messages: string[];

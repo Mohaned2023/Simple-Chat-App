@@ -18,10 +18,10 @@ export class MessageEntity extends BaseEntity {
     id: number;
 
     @Column()
-    senderId: number;
+    senderUsername: string;
 
     @Column()
-    receiverId: number;
+    receiverUsername: string;
 
     @Column()
     conversationId: number;
