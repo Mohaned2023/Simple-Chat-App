@@ -19,12 +19,10 @@ class RegisterScreen(BaseScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.selected_gender = None
-        self.error_message = ""
     
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
         yield Container(
-            Static("Register..", id="content"),
             Input(placeholder="Full Name", id="name"),
             Input(placeholder="Email", id="email"),
             Input(placeholder="Username", id="username"),
@@ -56,12 +54,9 @@ class RegisterScreen(BaseScreen):
                 "gender": False if str(self.selected_gender) == "Female" else True
             }
             if not self.check_register_values(register_data):
-                self.query_one("#content").update(self.error_message)
-                self.error_message = ""
                 return
             if not self.register(register_data):
-                self.query_one("#content").update(self.error_message)
-                return 
+                return
         elif event.button.id == "login_btr" or event.button.id == "back_btr":
             self.app.switch_screen("login")
         self.app.switch_screen("conversations")
@@ -69,16 +64,34 @@ class RegisterScreen(BaseScreen):
     def check_register_values( self, register_data: dict ) -> bool :
         is_valid: list[bool] = []
         if  len(register_data['name']) < 2 or len(register_data['name']) > 100 :
-            self.error_message += "Error: Name length is not ( 2 <= x <= 100 )\n"
+            self.notify(
+                "Name length is not ( 2 <= x <= 100 )!\n",
+                title="Name Error!",
+                severity="error"
+            )
             is_valid.append(False) 
         if not re.match(r"([a-z0-9_]+)", register_data['username']):
-            self.error_message += "Error: Username is not valid!\n"
+            self.notify(
+                "Username Not good!\n",
+                title="Username Error!",
+                severity="error"
+            )
             is_valid.append(False)
         if not re.match(r"((?=.*\d)|(?=.*\w+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$", register_data['password']):
-            self.error_message += "Error: Password is too weak!. Enter password contains capital letters, small letters, numbers and symbols\n"
+            self.notify(
+                "Password is too weak!\n"
+                "Enter password contains capital letters,\n"
+                "small letters, numbers and symbols\n",
+                title="Password Error!",
+                severity="error"
+            )
             is_valid.append(False)
         if not re.match(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", register_data['email']):
-            self.error_message += "Error: Email doesn't look like email\n"
+            self.notify(
+                "Email doesn't look like email!\n",
+                title="Email Error!",
+                severity="error"
+            )
             is_valid.append(False)
         return False if False in is_valid else True
 
@@ -91,11 +104,27 @@ class RegisterScreen(BaseScreen):
                 refreshToken= res.cookies.get('refreshToken')
             )
             Config.set_user(res_json['user'])
+            self.notify(
+                f"Hi {res_json['user']['name']} Thank you for using our app :)",
+                severity="information"
+            )
             return True
         elif res.status_code == 302:
-            self.error_message = "Error: Username or Email is found in the database!\n"
+            self.notify(
+                "Username or Email is found in the database!\n",
+                title="Username or Email Error!",
+                severity="error"
+            )
         elif res.status_code == 400:
-            self.error_message = "Error: Some fields are missing!\n"
+            self.notify(
+                "Some fields are missing!\n",
+                title="fields Error!",
+                severity="error"
+            )
         elif res.status_code in [429, 500]:
-            self.error_message = "Server Error: Too many requests!!\n"
+            self.notify(
+                "Too many requests! Please try again later.",
+                title="Server Error!",
+                severity="error"
+            )
         return False

@@ -12,7 +12,6 @@ class LoginScreen(BaseScreen):
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
         yield Container(
-            Static("Login..", id="content"),
             Input(placeholder="Username", id="username"),
             Input(placeholder="Password", password=True, id="password"),
             Button("Login", id="login_btn"),
@@ -25,11 +24,19 @@ class LoginScreen(BaseScreen):
         if event.button.id == "login_btn":
             username = self.query_one("#username").value
             password = self.query_one("#password").value
-            if not re.match(r"((?=.*\d)|(?=.*\w+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$", password) :
-                self.query_one("#content").update(f"Error: Password Not good!")
-                return
             if not re.match(r"([a-z0-9_]+)", username) :
-                self.query_one("#content").update(f"Error: Username Not good!")
+                self.notify(
+                    "Username Not good!\n",
+                    title="Username Error!",
+                    severity="error"
+                )
+                return
+            if not re.match(r"((?=.*\d)|(?=.*\w+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$", password) :
+                self.notify(
+                    "Password Not good!\n",
+                    title="Password Error!",
+                    severity="error"
+                )
                 return
             self.login( username, password )
         elif event.button.id == "register_btr":
@@ -52,10 +59,26 @@ class LoginScreen(BaseScreen):
                 refreshToken= res.cookies.get('refreshToken')
             )
             Config.set_user(res_json['user'])
+            self.notify(
+                f"Welcome back {res_json['user']['name']} :)",
+                severity="information"
+            )
             self.app.switch_screen("conversations")
         elif res.status_code == 401:
-            self.query_one("#content").update(f"Error: Invalid password!")
+            self.notify(
+                "Invalid password!",
+                title="Password Error!",
+                severity="error"
+            )
         elif res.status_code == 404:
-            self.query_one("#content").update(f"Error: User NOT found!")
+            self.notify(
+                "User NOT found!",
+                title="Username Error!",
+                severity="error"
+            )
         elif res.status_code in [429, 500] :
-            self.query_one("#content").update(f"Server Error: Too many requests!!\nPlease try to reload by :chats")
+            self.app.notify(
+                "Too many requests! Please try again later.",
+                title="Server Error!",
+                severity="error"
+            )

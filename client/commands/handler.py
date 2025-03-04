@@ -33,7 +33,11 @@ class CommandHandler:
         elif command.startswith(":delete"):
             self.deleteAccount()
         else: 
-            ...
+            self.app.notify(
+                f"Unknown command: {command}\n",
+                title="Command Error!",
+                severity="error"
+            )
     
     def createConversation(self, username:str ):
         accessToken, _ = Config.get_tokens()

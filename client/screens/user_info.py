@@ -16,7 +16,11 @@ class UserInformationsScreen(BaseScreen):
             self.set_content(self.format_user_data(user_data))
         else:
             if not re.match(r"([a-z0-9_]+)", self.username) or len(self.username) < 3:
-                self.set_content(f"Error: Username `{self.username}` invalid!")
+                self.notify(
+                    "Username Not good!\n",
+                    title="Username Error!",
+                    severity="error"
+                )
                 return
             accessToken, _ = Config.get_tokens()
             res = requests.get(
@@ -26,13 +30,30 @@ class UserInformationsScreen(BaseScreen):
             if res.status_code == 200:
                 self.set_content(self.format_user_data(res.json()))
             elif res.status_code == 400:
-                self.set_content(f"Error: Username `{self.username}` invalid!\n")
+                self.notify(
+                    "Username Not good!\n",
+                    title="Username Error!",
+                    severity="error"
+                )
             elif res.status_code == 401:
-                self.set_content("Error: Unauthorized access!\n")
+                self.notify(
+                    "Please make sure that you are logged in.\n"
+                    "If no try the command `:login` or `:register`.\n",
+                    title="Unauthorized Error!",
+                    severity="error"
+                )
             elif res.status_code == 404:
-                self.set_content("Error: User NOT found!\n")
+                self.notify(
+                    "User NOT found!\n",
+                    title="User Error!",
+                    severity="error"
+                )
             elif res.status_code in [429, 500]:
-                self.set_content("Server Error: Too many requests!!\n")
+                self.notify(
+                    "Too many requests! Please try again later.",
+                    title="Server Error!",
+                    severity="error"
+                )
 
     def format_user_data(self, user_data) -> str:
         return "\n".join([

@@ -6,7 +6,7 @@ from widgets.command_input import CommandInput
 class BaseScreen(Screen):
     def compose(self):
         yield Header()
-        self.content = Static("Loding....", id="content")
+        self.content = Static("....", id="content")
         yield Container(self.content)
         yield CommandInput()
         yield Footer()

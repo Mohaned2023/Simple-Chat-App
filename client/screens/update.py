@@ -19,12 +19,10 @@ class UpdateScreen(BaseScreen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.selected_gender = None
-        self.error_message = ""
     
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
         yield Container(
-            Static("Update..", id="content"),
             Input(placeholder="Full Name", id="name"),
             Input(placeholder="Username", id="username"),
             Input(placeholder="Password", password=True, id="password"),
@@ -51,12 +49,9 @@ class UpdateScreen(BaseScreen):
             }
             check_status, update_data = self.check_update_values(update_data)
             if not check_status:
-                self.query_one("#content").update(self.error_message)
-                self.error_message = ""
                 return
             if len(update_data.keys()) != 0:
                 if not self.update(update_data):
-                    self.query_one("#content").update(self.error_message)
                     return
         self.app.switch_screen("conversations")
 
@@ -64,17 +59,31 @@ class UpdateScreen(BaseScreen):
         new_update_date: dict = {}
         if  len(update_data['name']) != 0:
             if len(update_data['name']) < 2 or len(update_data['name']) > 100 :
-                self.error_message = "Error: Name length is not ( 2 <= x <= 100 )\n"
+                self.notify(
+                    "Name length is not ( 2 <= x <= 100 )!\n",
+                    title="Name Error!",
+                    severity="error"
+                )
                 return False, new_update_date
             new_update_date['name'] = update_data['name']
         if len(update_data['username']) != 0:
             if not re.match(r"([a-z0-9_]+)", update_data['username']):
-                self.error_message = "Error: Username is not valid!\n"
+                self.notify(
+                    "Username Not good!\n",
+                    title="Username Error!",
+                    severity="error"
+                )
                 return False, new_update_date
             new_update_date['username'] = update_data['username']
         if len(update_data['password']) != 0:
             if not re.match(r"((?=.*\d)|(?=.*\w+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$", update_data['password']):
-                self.error_message = "Error: Password is too weak!. Enter password contains capital letters, small letters, numbers and symbols\n"
+                self.notify(
+                    "Password is too weak!\n"
+                    "Enter password contains capital letters,\n"
+                    "small letters, numbers and symbols\n",
+                    title="Password Error!",
+                    severity="error"
+                )
                 return False, new_update_date
             new_update_date['password'] = update_data['password']
         if update_data['gender'] != Config.get_user().get('gender', None):
@@ -85,7 +94,12 @@ class UpdateScreen(BaseScreen):
         username: str | None = Config.get_user().get('username', None)
         accessToken, _ = Config.get_tokens()
         if not username:
-            self.error_message = "Error: User data NOT found!!, login or register first...\n"
+            self.notify(
+                "Please make sure that you are logged in.\n"
+                "If no try the command `:login` or `:register`.\n",
+                title="User Data Error!",
+                severity="error"
+            )
             return False
         res = requests.patch(
             Config.UPDATE_API.replace(":username",username),
@@ -98,16 +112,42 @@ class UpdateScreen(BaseScreen):
                 accessToken= res_json['accessToken'],
                 refreshToken= res.cookies.get('refreshToken')
             )
+            self.notify(
+                f"Your information has been updated.",
+                title="Updated",
+                severity="information"
+            )
             Config.set_user(res_json['user'])
             return True
         elif res.status_code == 302:
-            self.error_message = "Error: Username is found in the database!\n"
+            self.notify(
+                "Username found in the database!\n",
+                title="Username Error!",
+                severity="error"
+            )
         elif res.status_code == 400:
-            self.error_message = "Error: Some fields are missing!\n"
+            self.notify(
+                "Some fields are missing!\n",
+                title="fields Error!",
+                severity="error"
+            )
         elif res.status_code in [401, 403]:
-            self.error_message = "Error: Unauthorized access!\n"
+            self.notify(
+                "Please make sure that you are logged in.\n"
+                "If no try the command `:login` or `:register`.\n",
+                title="Unauthorized Error!",
+                severity="error"
+            )
         elif res.status_code == 404:
-            self.error_message = "Error: User NOT found!\n"
+            self.notify(
+                "User NOT found!\n",
+                title="User Error!",
+                severity="error"
+            )
         elif res.status_code in [429, 500]:
-            self.error_message = "Server Error: Too many requests!!\n"
+            self.notify(
+                "Too many requests! Please try again later.",
+                title="Server Error!",
+                severity="error"
+            )
         return False

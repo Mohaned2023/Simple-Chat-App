@@ -24,7 +24,6 @@ class ConversationsScreen(BaseScreen):
                     usernames = f"@{i['user1']} @{i['user2']}".replace(f"@{username}", "")
                 self.conversations += f"{i['id']}: {usernames}\nLast message: {i['lastMessage']}\nLast active: {i['lastActive']}\n{'-'*20}\n"
         elif res.status_code == 401:
-            # TODO: Add notification for login or register.
             res = requests.get(Config.REFRESH_API, cookies={ 'refreshToken': refreshToken })
             if res.status_code == 200:
                 res_json: dict = res.json()
@@ -34,9 +33,22 @@ class ConversationsScreen(BaseScreen):
                 )
                 Config.set_user(res_json['user'])
                 self.app.switch_screen("conversations")
-            elif res.status_code in [401, 404]: 
+            elif res.status_code in [401, 404]:
+                self.notify(
+                    "Please login before you continue.\n",
+                    title="Unauthorized Error!",
+                    severity="error"
+                )
                 self.app.switch_screen("login")
         elif res.status_code == 404:
-            self.conversations = "No Conversations to show!!!"
+            self.notify(
+                "No Conversations to show!\n",
+                title="Not Found!",
+                severity="warning"
+            )
         elif res.status_code in [429, 500] :
-            self.conversations = "Server Error: Too many requests!!\nPlease try to reload by :chats"
+            self.app.notify(
+                "Too many requests! Please try again later.",
+                title="Server Error!",
+                severity="error"
+            )
