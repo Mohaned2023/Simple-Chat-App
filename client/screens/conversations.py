@@ -17,8 +17,12 @@ class ConversationsScreen(BaseScreen):
         accessToken, refreshToken = Config.get_tokens()
         res = requests.get(Config.CONVERSATIONS_API, headers={ 'Authorization': accessToken })
         if res.status_code == 200:
+            username = Config.get_user().get("username", None)
             for i in res.json():
-                self.conversations += f"{i['id']}: {i['lastMessage']}\n  Last Active: {i['lastActive']}\n\n"
+                usernames = f"@{i['user1']} @{i['user2']}"
+                if username:
+                    usernames = f"@{i['user1']} @{i['user2']}".replace(f"@{username}", "")
+                self.conversations += f"{i['id']}: {usernames}\nLast message: {i['lastMessage']}\nLast active: {i['lastActive']}\n{'-'*20}\n"
         elif res.status_code == 401:
             # TODO: Add notification for login or register.
             res = requests.get(Config.REFRESH_API, cookies={ 'refreshToken': refreshToken })
