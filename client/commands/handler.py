@@ -30,13 +30,15 @@ class CommandHandler:
                 )
                 return
             self.createConversation(args[1])
+        elif command.startswith(":delete"):
+            self.deleteAccount()
         else: 
             ...
     
     def createConversation(self, username:str ):
         accessToken, _ = Config.get_tokens()
         res = requests.post(
-            Config.CREATE_CONVERSATION.replace(":username", username),
+            Config.CREATE_CONVERSATION_API.replace(":username", username),
             headers={ 'Authorization': accessToken }
         )
         if res.status_code == 201:
@@ -58,6 +60,36 @@ class CommandHandler:
             self.app.notify(
                 f"User `{username}` NOT found.\n",
                 title="Not Found Error",
+                severity="error"
+            )
+        elif res.status_code in [429, 500]:
+            self.app.notify(
+                "Too many requests! Please try again later.",
+                title="Server Error!",
+                severity="error"
+            )
+
+    def deleteAccount(self):
+        accessToken, _ = Config.get_tokens()
+        username = Config.get_user()['username']
+        res = requests.delete(
+            Config.DELETE_USER_API.replace(":username", username),
+            headers={ 'Authorization': accessToken }
+        )
+        if res.status_code == 200:
+            Config.set_tokens("", "")
+            Config.set_user({})
+            self.app.notify(
+                "Your account has been deleted.",
+                title="Deleted",
+                severity="information"
+            )
+            self.app.switch_screen("login")
+        elif res.status_code == 401:
+            self.app.notify(
+                "Please make sure that you are logged in.\n"
+                "If no try the command `:login` or `:register`.\n",
+                title="Unauthorized Error!",
                 severity="error"
             )
         elif res.status_code in [429, 500]:

@@ -16,7 +16,8 @@ class Config:
     REGISTER_API: str = SERVER_URL + BASE_API + '/user/register'
     UPDATE_API: str = SERVER_URL + BASE_API + '/user/update/:username'
     USER_INFO_API: str = SERVER_URL + BASE_API + '/user/info/:username'
-    CREATE_CONVERSATION: str = SERVER_URL + BASE_API + '/conversation/:username'
+    DELETE_USER_API: str = SERVER_URL + BASE_API + '/user/delete/:username'
+    CREATE_CONVERSATION_API: str = SERVER_URL + BASE_API + '/conversation/:username'
 
     @staticmethod
     def get_tokens() -> (str, str):
