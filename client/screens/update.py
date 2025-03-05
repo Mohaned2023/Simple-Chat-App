@@ -117,6 +117,7 @@ class UpdateScreen(BaseScreen):
                 title="Updated",
                 severity="information"
             )
+            self.app.socketClient.start()
             Config.set_user(res_json['user'])
             return True
         elif res.status_code == 302:

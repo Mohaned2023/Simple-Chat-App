@@ -63,6 +63,7 @@ class LoginScreen(BaseScreen):
                 f"Welcome back {res_json['user']['name']} :)",
                 severity="information"
             )
+            self.app.socketClient.start()
             self.app.switch_screen("conversations")
         elif res.status_code == 401:
             self.notify(

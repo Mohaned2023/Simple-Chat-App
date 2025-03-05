@@ -108,6 +108,7 @@ class RegisterScreen(BaseScreen):
                 f"Hi {res_json['user']['name']} Thank you for using our app :)",
                 severity="information"
             )
+            self.app.socketClient.start()
             return True
         elif res.status_code == 302:
             self.notify(

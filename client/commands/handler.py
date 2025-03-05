@@ -11,7 +11,23 @@ class CommandHandler:
         if command.startswith(":chats"):
             self.app.switch_screen("conversations")
         elif command.startswith(":chat"):
-            self.app.switch_screen("chat")
+            if len(args) < 2:
+                self.app.notify(
+                    "The chat command needed to have the conversation id\n"
+                    "Please use the command like: `:chat <conversation-ID>`.",
+                    title="Not Found Error",
+                    severity="error"
+                )
+                return
+            try:
+                self.app.switch_screen("chat", conversationId=int(args[1]))
+            except ValueError:
+                self.app.notify(
+                    "Please make sure that the conversation id is int..\n",
+                    title="ID Error!",
+                    severity="error"
+                )
+                return
         elif command.startswith(":login"):
             self.app.switch_screen("login")
         elif command.startswith(":register"):

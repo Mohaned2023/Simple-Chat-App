@@ -17,8 +17,10 @@ class ConversationsScreen(BaseScreen):
         accessToken, refreshToken = Config.get_tokens()
         res = requests.get(Config.CONVERSATIONS_API, headers={ 'Authorization': accessToken })
         if res.status_code == 200:
+            res_json = res.json()
+            self.app.conversations = res_json
             username = Config.get_user().get("username", None)
-            for i in res.json():
+            for i in res_json:
                 usernames = f"@{i['user1']} @{i['user2']}"
                 if username:
                     usernames = f"@{i['user1']} @{i['user2']}".replace(f"@{username}", "")
