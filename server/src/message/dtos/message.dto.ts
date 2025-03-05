@@ -12,7 +12,7 @@ export class MessageDto {
     conversationId: number;
 
     @IsNotEmpty()
-    @IsNumber()
+    @IsString()
     receiverUsername: string;
 
     @IsNotEmpty()
