@@ -57,9 +57,11 @@ class RegisterScreen(BaseScreen):
                 return
             if not self.register(register_data):
                 return
-        elif event.button.id == "login_btr" or event.button.id == "back_btr":
+            self.app.switch_screen("conversations")
+        elif event.button.id == "login_btr":
             self.app.switch_screen("login")
-        self.app.switch_screen("conversations")
+        elif event.button.id == "back_btr":
+            self.app.switch_screen("conversations")
 
     def check_register_values( self, register_data: dict ) -> bool :
         is_valid: list[bool] = []
