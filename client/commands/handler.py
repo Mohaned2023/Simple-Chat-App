@@ -48,9 +48,12 @@ class CommandHandler:
             self.createConversation(args[1])
         elif command.startswith(":delete"):
             self.deleteAccount()
+        elif command.startswith(":help"):
+            self.app.switch_screen("help")
         else: 
             self.app.notify(
-                f"Unknown command: {command}\n",
+                f"Unknown command: {command}\n"
+                "Please user `:help` to get help..",
                 title="Command Error!",
                 severity="error"
             )

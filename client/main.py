@@ -9,6 +9,7 @@ from screens.login         import LoginScreen
 from screens.register      import RegisterScreen
 from screens.update        import UpdateScreen
 from screens.user_info     import UserInformationsScreen
+from screens.help          import HelpScreen
 
 class ChatApp(App):
     SCREENS = {
@@ -17,7 +18,8 @@ class ChatApp(App):
         'login': LoginScreen,
         'register': RegisterScreen,
         'update': UpdateScreen,
-        'user_info': UserInformationsScreen
+        'user_info': UserInformationsScreen,
+        "help": HelpScreen
     }
 
     def __init__(self):

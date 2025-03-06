@@ -1,0 +1,17 @@
+- Help:
+    - :help  -> To get this message.
+
+- Account:
+    - :login           -> To login.
+    - :register        -> To register.
+    - :info            -> To get your informations.
+    - :info <username> -> To get user information.
+    - :delete          -> To delete your account.
+    - :update          -> To update your account.
+
+- Conversation:
+    - :create <username> -> To create conversation with user.
+    - :chats             -> To get your conversations.
+
+- Chat:
+    - :chat <conversation-id>  -> To enter a conversation.
